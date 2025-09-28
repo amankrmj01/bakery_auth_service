@@ -1,0 +1,155 @@
+### health check
+GET http://localhost:8082/api/auth/health
+
+
+### spring actuator health check
+GET http://localhost:8082/actuator/health
+
+
+### Test 1: User Registration
+POST http://localhost:8082/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "john_baker",
+  "email": "john@bakery.com",
+  "password": "securepass123",
+  "firstName": "John",
+  "lastName": "Baker",
+  "phone": "1234567890",
+  "address": "123 Bakery Street"
+}
+
+### Test 1a : Second User Registration
+POST http://localhost:8082/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "emma_smith",
+  "email": "emma@bakery.com",
+  "password": "strongpass789",
+  "firstName": "Emma",
+  "lastName": "Smith",
+  "phone": "9876543210",
+  "address": "789 Sweet Lane"
+}
+
+
+### Test 2: User Login
+POST http://localhost:8082/api/auth/login
+Content-Type: application/json
+
+{
+  "usernameOrEmail": "john_baker",
+  "password": "securepass123"
+}
+
+### Test 3: Login with Email
+POST http://localhost:8082/api/auth/login
+Content-Type: application/json
+
+{
+  "usernameOrEmail": "john@bakery.com",
+  "password": "securepass123"
+}
+
+### Test 4: Token Validation
+# Replace YOUR_ACCESS_TOKEN_HERE with the actual token
+POST http://localhost:8082/api/auth/validate
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImZ1bGxOYW1lIjoiSm9obiBCYWtlciIsInRva2VuVHlwZSI6IkFDQ0VTUyIsInVzZXJJZCI6Ijg1MjY0MmUwLTE5OTItNGQ3YS05NWM5LTFlYWZiOTk4Mzg4NSIsImVtYWlsIjoiam9obkBiYWtlcnkuY29tIiwic3ViIjoiam9obl9iYWtlciIsImlhdCI6MTc1ODk5NDA0MiwiZXhwIjoxNzU5MDgwNDQyLCJpc3MiOiJiYWtlcnktYXV0aC1zZXJ2aWNlIn0.C56xJgyujFmpT7689drgP-Ra2bo8_fk6c68CekwVh4k
+
+### Test 5: Get Current User Info
+# Replace YOUR_ACCESS_TOKEN_HERE with the actual token
+GET http://localhost:8082/api/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImZ1bGxOYW1lIjoiSm9obiBCYWtlciIsInRva2VuVHlwZSI6IkFDQ0VTUyIsInVzZXJJZCI6Ijg1MjY0MmUwLTE5OTItNGQ3YS05NWM5LTFlYWZiOTk4Mzg4NSIsImVtYWlsIjoiam9obkBiYWtlcnkuY29tIiwic3ViIjoiam9obl9iYWtlciIsImlhdCI6MTc1ODk5NDA0MiwiZXhwIjoxNzU5MDgwNDQyLCJpc3MiOiJiYWtlcnktYXV0aC1zZXJ2aWNlIn0.C56xJgyujFmpT7689drgP-Ra2bo8_fk6c68CekwVh4k
+
+### Test 6: Get User Profile
+# Replace YOUR_ACCESS_TOKEN_HERE with the actual token
+GET http://localhost:8082/api/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImZ1bGxOYW1lIjoiSm9obiBCYWtlciIsInRva2VuVHlwZSI6IkFDQ0VTUyIsInVzZXJJZCI6Ijg1MjY0MmUwLTE5OTItNGQ3YS05NWM5LTFlYWZiOTk4Mzg4NSIsImVtYWlsIjoiam9obkBiYWtlcnkuY29tIiwic3ViIjoiam9obl9iYWtlciIsImlhdCI6MTc1ODk5NDA0MiwiZXhwIjoxNzU5MDgwNDQyLCJpc3MiOiJiYWtlcnktYXV0aC1zZXJ2aWNlIn0.C56xJgyujFmpT7689drgP-Ra2bo8_fk6c68CekwVh4k
+
+### Test 7: Update User Profile
+# Replace YOUR_ACCESS_TOKEN_HERE with the actual token
+PUT http://localhost:8082/api/users/profile
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "username": "john_baker",
+  "email": "john@bakery.com",
+  "firstName": "John",
+  "lastName": "Master Baker",
+  "phone": "9876543210",
+  "address": "456 New Bakery Avenue"
+}
+
+### Test 8: Token Refresh
+# Replace YOUR_REFRESH_TOKEN_HERE with the actual token
+POST http://localhost:8082/api/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJ0b2tlblR5cGUiOiJSRUZSRVNIIiwidXNlcklkIjoiODUyNjQyZTAtMTk5Mi00ZDdhLTk1YzktMWVhZmI5OTgzODg1Iiwic3ViIjoiam9obl9iYWtlciIsImlhdCI6MTc1ODk5NDQ4NCwiZXhwIjoxNzU5NTk5Mjg0LCJpc3MiOiJiYWtlcnktYXV0aC1zZXJ2aWNlIn0.BKlskXfbdCnXykZ2J_79M9WcWj5bZ3tA308Vijf6Vc4"
+}
+
+### Test 9: Change Password
+# Replace YOUR_ACCESS_TOKEN_HERE with the actual token
+POST http://localhost:8082/api/auth/change-password
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImZ1bGxOYW1lIjoiSm9obiBCYWtlciIsInRva2VuVHlwZSI6IkFDQ0VTUyIsInVzZXJJZCI6Ijg1MjY0MmUwLTE5OTItNGQ3YS05NWM5LTFlYWZiOTk4Mzg4NSIsImVtYWlsIjoiam9obkBiYWtlcnkuY29tIiwic3ViIjoiam9obl9iYWtlciIsImlhdCI6MTc1ODk5NDQ5NSwiZXhwIjoxNzU5MDgwODk1LCJpc3MiOiJiYWtlcnktYXV0aC1zZXJ2aWNlIn0.7jCsVpuYFd1J7hvAGbSwLWsd7CgJz3u8Q5eCTkqokpg
+Content-Type: application/json
+
+{
+  "currentPassword": "securepass123",
+  "newPassword": "newsecurepass456"
+}
+
+### Test 10a: Invalid Credentials
+POST http://localhost:8082/api/auth/login
+Content-Type: application/json
+
+{
+  "usernameOrEmail": "john_baker",
+  "password": "wrongpassword"
+}
+
+
+### again login with new password
+POST http://localhost:8082/api/auth/login
+Content-Type: application/json
+
+{
+  "usernameOrEmail": "john_baker",
+  "password": "newsecurepass456"
+}
+
+### Test 10b: Duplicate Username
+POST http://localhost:8082/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "john_baker",
+  "email": "different@email.com",
+  "password": "password123",
+  "firstName": "Different",
+  "lastName": "User"
+}
+
+### Test 10c: Invalid Token
+POST http://localhost:8082/api/auth/validate
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImZ1bGxOYW1lIjoiSm9obiBCYWtlciIsInRva2VuVHlwZSI6IkFDQ0VTUyIsInVzZXJJZCI6Ijg1MjY0MmUwLTE5OTItNGQ3YS05NWM5LTFlYWZiOTk4Mzg4NSIsImVtYWlsIjoiam9obkBiYWtlcnkuY29tIiwic3ViIjoiam9obl9iYWtlciIsImlhdCI6MTc1ODk5NDU5MiwiZXhwIjoxNzU5MDgwOTkyLCJpc3MiOiJiYWtlcnktYXV0ad1zZXJ2aWNlIn0.f5lrwDX32hCksd1x9uqJNMl9MJJGOl8VRrPTqq722o0
+
+### Test 11: Registration through Gateway
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "gateway_user",
+  "email": "gateway@bakery.com",
+  "password": "password123",
+  "firstName": "Gateway",
+  "lastName": "User"
+}
+
+### Test 12: Get All Users (Admin only)
+GET http://localhost:8082/api/users/admin/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkpvaG4gQmFrZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiI4NTI2NDJlMC0xOTkyLTRkN2EtOTVjOS0xZWFmYjk5ODM4ODUiLCJlbWFpbCI6ImpvaG5AYmFrZXJ5LmNvbSIsInN1YiI6ImpvaG5fYmFrZXIiLCJpYXQiOjE3NTg5OTUxODYsImV4cCI6MTc1OTA4MTU4NiwiaXNzIjoiYmFrZXJ5LWF1dGgtc2VydmljZSJ9.A94nglJZuRB8ak3Q0VRmyJqMmI7khuuLPwqU3TKrKrc

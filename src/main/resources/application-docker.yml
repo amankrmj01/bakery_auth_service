@@ -1,0 +1,31 @@
+# Docker-specific configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-auth:5432/bakery_auth
+    username: auth_user
+    password: auth_password
+  jpa:
+    show-sql: false
+
+# Eureka Configuration for Docker
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    hostname: auth-service
+
+# Server Configuration
+server:
+  port: 8082
+
+# Logging for Docker
+logging:
+  level:
+    com.shah_s.bakery_auth_service: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    root: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"

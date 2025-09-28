@@ -1,0 +1,32 @@
+# Test-specific configuration
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.postgresql.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+
+# Test JWT Configuration
+jwt:
+  secret: dGVzdFNlY3JldEtleUZvclRlc3RpbmdQdXJwb3Nlc09ubHk=
+  expiration: 3600000  # 1 hour for testing
+  refresh-expiration: 7200000  # 2 hours for testing
+
+# Disable Eureka for tests
+eureka:
+  client:
+    enabled: false
+
+# Test logging
+logging:
+  level:
+    com.shah_s.bakery_auth_service: DEBUG
+    root: WARN

@@ -1,0 +1,182 @@
+### Step 1: Create Admin User & Get Admin Token
+# Step 1a: Register Admin User
+POST http://localhost:8082/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin_user",
+  "email": "admin@bakery.com",
+  "password": "adminpass123",
+  "firstName": "Admin",
+  "lastName": "User"
+}
+
+
+### Save the access_token from the response!
+
+# Step 1b: Promote to Admin (via database)
+# Run this in your terminal (Docker):
+# docker exec -it bakery-auth-db psql -U auth_user -d bakery_auth -c "UPDATE users SET role = 'ADMIN' WHERE username = 'admin_user';"
+
+### Step 1c: Login as Admin (to get fresh token with ADMIN role)
+POST http://localhost:8082/api/auth/login
+Content-Type: application/json
+# Save the new access_token from the response for admin tests below!
+
+{
+  "usernameOrEmail": "admin_user",
+  "password": "adminpass123"
+}
+
+### Admin Test 1: Get All Users
+GET http://localhost:8082/api/users/admin/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected Response:
+# [
+#   { ...user fields... },
+#   { ...user fields... }
+# ]
+
+### Admin Test 2: Search Users by Name
+GET http://localhost:8082/api/users/admin/search?query=gateway
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected: Users matching search criteria
+
+### Admin Test 2b: Search Users by Email
+GET http://localhost:8082/api/users/admin/search?query=bakery.com
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected: Users matching search criteria
+
+### Admin Test 3a: Get All USER Role Users
+GET http://localhost:8082/api/users/admin/role/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected: All users with USER role
+
+### Admin Test 3b: Get All ADMIN Role Users
+GET http://localhost:8082/api/users/admin/role/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected: All users with ADMIN role
+
+### Admin Test 3c: Get All BAKER Role Users
+GET http://localhost:8082/api/users/admin/role/baker
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected: All users with BAKER role
+
+### Admin Test 4a: Promote User to BAKER
+PUT http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd/role
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+Content-Type: application/json
+# Expected Response:
+# { "message": "User role updated successfully" }
+
+{
+  "role": "BAKER"
+}
+
+### Admin Test 4b: Promote User to ADMIN
+PUT http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd/role
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+Content-Type: application/json
+# Expected Response:
+# { "message": "User role updated successfully" }
+
+{
+  "role": "USER"
+}
+
+### Admin Test 5a: Deactivate User
+PUT http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd/status
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+Content-Type: application/json
+# Expected: { "message": "User status updated successfully" }
+
+{
+  "status": "INACTIVE"
+}
+
+### Admin Test 5b: Lock User Account
+PUT http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd/status
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+Content-Type: application/json
+# Expected: { "message": "User status updated successfully" }
+
+{
+  "status": "LOCKED"
+}
+
+### Admin Test 5c: Reactivate User
+PUT http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd/status
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+Content-Type: application/json
+# Expected: { "message": "User status updated successfully" }
+
+{
+  "status": "ACTIVE"
+}
+
+### Admin Test 6: Unlock User Account
+POST http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd/unlock
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected Response:
+# { "message": "User account unlocked successfully" }
+
+### Admin Test 7: Get User Statistics Dashboard
+GET http://localhost:8082/api/users/admin/statistics
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected Response:
+# {
+#   "totalUsers": 3,
+#   "activeUsers": 2,
+#   "verifiedUsers": 0,
+#   "adminUsers": 2
+# }
+
+### Admin Test 8: Delete User (Destructive!)
+DELETE http://localhost:8082/api/users/admin/2dafd00c-b368-460a-85be-c83f8a7326cd
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected Response:
+# { "message": "User deleted successfully" }
+
+### Admin Test 9a: Try admin endpoint with regular user token
+GET http://localhost:8082/api/users/admin/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk1NzQ1LCJleHAiOjE3NTkwODIxNDUsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.Ulf_JajuN1bOc3GE6IdrupspQH8zoaRnUDx0L8G9wok
+# Expected: 403 Forbidden
+
+### Admin Test 9b: Try admin endpoint without token
+GET http://localhost:8082/api/users/admin/all
+# Expected: 401 Unauthorized
+
+### Admin Test 9c: Try admin endpoint with invalid token
+GET http://localhost:8082/api/users/admin/all
+Authorization: Bearer invalid_token_12345
+# Expected: 401 Unauthorized or token validation error
+
+### Admin Test 10: Get All Users Through Gateway
+GET http://localhost:8080/api/users/admin/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk2OTMwLCJleHAiOjE3NTkwODMzMzAsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.ia8nL6Qc8-daaggRtY_vra-v_i1OCqNbBY6K0bAIP3A
+# Expected: Same as direct service
+
+### Admin Test 11a: Invalid Role Assignment
+PUT http://localhost:8082/api/users/admin/24477d70-826d-43ea-8bc6-93977e852b66/role
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk2NDQxLCJleHAiOjE3NTkwODI4NDEsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.zIo1NbU4Q8Zp88aL1SclrL1vyAG2KG2MobNQMN1_ZDg
+Content-Type: application/json
+# Expected: 400 Bad Request
+
+{
+  "role": "INVALID_ROLE"
+}
+
+### Admin Test 11b: Invalid Status Assignment
+PUT http://localhost:8082/api/users/admin/24477d70-826d-43ea-8bc6-93977e852b66/status
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk2NDQxLCJleHAiOjE3NTkwODI4NDEsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.zIo1NbU4Q8Zp88aL1SclrL1vyAG2KG2MobNQMN1_ZDg
+Content-Type: application/json
+# Expected: 400 Bad Request
+
+{
+  "status": "INVALID_STATUS"
+}
+
+### Admin Test 11c: Operations on Non-existent User
+DELETE http://localhost:8082/api/users/admin/00000000-0000-0000-0000-000000000000
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJmdWxsTmFtZSI6IkFkbWluIFVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOiJlZTgzZWUyNi1jNGFmLTQzZjctOGE3YS05ZDE0MTg5MTUzMTIiLCJlbWFpbCI6ImFkbWluQGJha2VyeS5jb20iLCJzdWIiOiJhZG1pbl91c2VyIiwiaWF0IjoxNzU4OTk2NDQxLCJleHAiOjE3NTkwODI4NDEsImlzcyI6ImJha2VyeS1hdXRoLXNlcnZpY2UifQ.zIo1NbU4Q8Zp88aL1SclrL1vyAG2KG2MobNQMN1_ZDg
+# Expected: 401 Unauthorized - "User not found"

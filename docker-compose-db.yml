@@ -1,0 +1,25 @@
+services:
+  postgres-auth:
+    image: postgres:15-alpine
+    container_name: bakery-auth-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: bakery_auth
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - bakery-network
+
+volumes:
+  postgres_auth_data:
+    driver: local
+
+networks:
+  bakery-network:
+    driver: bridge

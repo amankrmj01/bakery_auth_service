@@ -1,0 +1,126 @@
+# Server Configuration
+server:
+  port: 8082
+
+# Spring Application Configuration
+spring:
+  application:
+    name: auth-service
+
+  # PostgreSQL Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bakery_auth
+    username: auth_user
+    password: auth_password
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  # Jackson Configuration (for JSON handling)
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization:
+      write-dates-as-timestamps: false
+  sql:
+    init:
+      schema-locations: classpath:init-scripts/01-init-auth-db.sql
+
+  docker:
+    compose:
+      enabled: false
+
+#  security:
+#    user:
+#      name: ""
+#      password: ""
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    enabled: true
+  instance:
+    prefer-ip-address: true
+    instance-id: "${spring.application.name}:${server.port}"
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+
+# JWT Configuration
+jwt:
+  secret: bWVnYVN1cGVyU2VjcmV0S2V5Rm9yQmFrZXJ5QXV0aFNlcnZpY2UyMDI1
+  expiration: 86400000  # 24 hours in milliseconds
+  refresh-expiration: 604800000  # 7 days in milliseconds
+
+# Management & Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: "${spring.application.name}"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+
+info:
+  app:
+    name: Bakery Auth Service
+    description: Authentication and user management service
+    version: 1.0.0
+  build:
+    version: '@project.version@'
+    timestamp: '@timestamp@'
+
+# Security Configuration
+security:
+  password:
+    strength: 10  # BCrypt strength
+  login:
+    max-attempts: 5
+    lockout-duration: 300000  # 5 minutes in milliseconds
+
+# Logging Configuration
+logging:
+  level:
+    com.shah_s.bakery_auth_service: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+    root: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+  file:
+    name: logs/auth-service.log
